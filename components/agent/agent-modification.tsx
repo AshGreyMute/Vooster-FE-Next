@@ -2,12 +2,12 @@
 "use client";
 
 import { useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { ChatLayout } from '@/components/chat/chat-layout';
 import type { Agent, Message } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal } from 'lucide-react';
+import { Terminal, Wand2 } from 'lucide-react';
 
 interface AgentModificationProps {
   agent: Agent;
@@ -16,14 +16,13 @@ interface AgentModificationProps {
 
 export default function AgentModification({ agent, onModified }: AgentModificationProps) {
   const [isSending, setIsSending] = useState(false);
-  const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       role: 'system',
       content: (
         <span className="text-center w-full block">
-          이제 수정 모드입니다. <strong>{agent.name}</strong> 에이전트에 적용할 변경 사항을 설명해주세요.
+          <strong>{agent.name}</strong> 에이전트에 적용할 변경 사항을 설명해주세요.
         </span>
       ),
     },
@@ -53,24 +52,27 @@ export default function AgentModification({ agent, onModified }: AgentModificati
     };
 
     setMessages(prev => [...prev, aiResponse]);
-
-    toast({
-      title: '에이전트 업데이트됨',
-      description: '에이전트 설명이 수정되었습니다. 변경사항을 배포할 수 있습니다.',
-    });
     
     onModified();
     setIsSending(false);
   };
 
   return (
-    <Card className="rounded-2xl h-[600px] overflow-hidden">
-      <ChatLayout
-        initialMessages={messages}
-        onSendMessage={handleSendMessage}
-        isSending={isSending}
-        chatContainerClassName="h-full"
-      />
+    <Card className="rounded-2xl flex flex-col h-[800px] overflow-hidden">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2"><Wand2 className="h-5 w-5" />자연어로 수정</CardTitle>
+        <CardDescription>
+          채팅을 통해 에이전트의 동작을 수정하고 즉시 변경사항을 확인하세요.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="p-0 flex-grow min-h-0">
+        <ChatLayout
+          initialMessages={messages}
+          onSendMessage={handleSendMessage}
+          isSending={isSending}
+          chatContainerClassName="h-full border-t"
+        />
+      </CardContent>
     </Card>
   );
 }

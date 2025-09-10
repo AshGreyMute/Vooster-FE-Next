@@ -5,15 +5,17 @@ export type Agent = {
   createdAt: string;
   executionCount: number;
   status: 'in-operation' | 'building';
+  toolIds?: string[];
   graph?: {
     nodes: any[];
     edges: any[];
   };
+  blueprint?: string;
 };
 
 export type Tool = {
   id: string;
-  name: string;
+  name:string;
   description: string;
   registeredAt: string;
   status: 'active' | 'inactive';

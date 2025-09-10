@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import { Play, Loader2, Square, ChevronsRight } from 'lucide-react';
+import { Play, Loader2, Square, ChevronsRight, Terminal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -28,7 +28,7 @@ export default function AgentExecution() {
 
   useEffect(() => {
     if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('div');
+        const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
         if (viewport) {
             viewport.scrollTop = viewport.scrollHeight;
         }
@@ -64,14 +64,14 @@ export default function AgentExecution() {
   }
 
   return (
-    <Card className="rounded-2xl">
+    <Card className="rounded-2xl flex flex-col h-[800px]">
       <CardHeader>
-        <CardTitle>실행 및 로그</CardTitle>
+        <CardTitle className="flex items-center gap-2"><Terminal className="h-5 w-5" />실행 및 로그</CardTitle>
         <CardDescription>
           에이전트를 테스트하고 실시간 실행 로그를 보려면 입력을 제공하세요.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-4">
+      <CardContent className="flex flex-col gap-4 flex-grow min-h-0">
         <div>
           <label htmlFor="input" className="block text-sm font-medium text-foreground mb-2">
             테스트 입력
@@ -83,7 +83,7 @@ export default function AgentExecution() {
             placeholder='예: 내 주문 상태는?'
           />
         </div>
-        <Card className="bg-background">
+        <Card className="bg-background flex flex-col flex-grow">
           <CardHeader className="flex flex-row items-center justify-between p-4 border-b">
             <h3 className="font-semibold">실행 로그</h3>
             {isRunning ? (
@@ -98,8 +98,8 @@ export default function AgentExecution() {
               </Button>
             )}
           </CardHeader>
-          <CardContent className="p-0">
-            <ScrollArea ref={scrollAreaRef} className="h-72 w-full">
+          <CardContent className="p-0 flex-grow">
+            <ScrollArea ref={scrollAreaRef} className="h-full w-full">
               <div className="p-4 font-code text-sm">
                 {logs.length === 0 && !isRunning && (
                   <p className="text-muted-foreground">로그를 보려면 "에이전트 실행"을 클릭하세요.</p>

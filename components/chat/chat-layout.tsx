@@ -1,17 +1,19 @@
+
 "use client"
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Send, Loader2, Bot, User, Sparkles } from 'lucide-react';
+import { Send, Loader2, Bot, User, Sparkles, Paperclip } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import type { Message } from '@/types';
 import { ScrollArea } from '../ui/scroll-area';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 interface ChatLayoutProps {
   initialMessages: Message[];
-  onSendMessage: (message: string) => Promise<void>;
+  onSendMessage: (message: string, file?: File) => Promise<void>;
   isSending: boolean;
   chatContainerClassName?: string;
   samplePrompts?: string[];
@@ -22,6 +24,7 @@ export function ChatLayout({ initialMessages, onSendMessage, isSending, chatCont
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState('');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setMessages(initialMessages);
@@ -56,9 +59,21 @@ export function ChatLayout({ initialMessages, onSendMessage, isSending, chatCont
     }
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      onSendMessage(`첨부파일: ${file.name}`, file);
+    }
+    // 동일한 파일을 다시 업로드할 수 있도록 입력 값 초기화
+    if(fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const hasMessages = messages.length > 1 || (messages.length === 1 && messages[0].role !== 'system');
 
   return (
+    <TooltipProvider>
     <div className={cn("flex h-full flex-col", chatContainerClassName)}>
       <ScrollArea className="flex-grow" ref={scrollAreaRef}>
         <div className="p-4 space-y-6">
@@ -82,7 +97,7 @@ export function ChatLayout({ initialMessages, onSendMessage, isSending, chatCont
              ) : (
                 <div
                   className={cn(
-                    "max-w-xl rounded-2xl p-3 text-sm whitespace-pre-wrap",
+                    "max-w-xl rounded-lg p-3 text-sm whitespace-pre-wrap",
                     message.role === "user"
                       ? "bg-primary text-primary-foreground rounded-br-none"
                       : "bg-muted rounded-bl-none"
@@ -103,7 +118,7 @@ export function ChatLayout({ initialMessages, onSendMessage, isSending, chatCont
              <Avatar className="h-8 w-8 border">
                 <AvatarFallback><Bot className="h-4 w-4"/></AvatarFallback>
               </Avatar>
-            <div className="bg-muted rounded-2xl p-3 text-sm flex items-center rounded-bl-none">
+            <div className="bg-muted rounded-lg p-3 text-sm flex items-center rounded-bl-none">
                 <Loader2 className="h-4 w-4 animate-spin"/>
             </div>
           </div>
@@ -130,6 +145,23 @@ export function ChatLayout({ initialMessages, onSendMessage, isSending, chatCont
         )}
       </ScrollArea>
       <div className="relative border-t p-4 flex items-end gap-2">
+        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+        <Tooltip>
+          <TooltipTrigger asChild>
+             <Button
+                variant="ghost"
+                size="icon"
+                className="shrink-0"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isSending}
+              >
+                <Paperclip className="h-4 w-4" />
+              </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>파일 첨부</p>
+          </TooltipContent>
+        </Tooltip>
         <Textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -149,5 +181,6 @@ export function ChatLayout({ initialMessages, onSendMessage, isSending, chatCont
         </Button>
       </div>
     </div>
+    </TooltipProvider>
   );
 }

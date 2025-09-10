@@ -9,6 +9,27 @@ export const MOCK_AGENTS: Agent[] = [
     createdAt: '2023-10-01',
     executionCount: 1254,
     status: 'in-operation',
+    toolIds: ['tool-1', 'tool-2'],
+    blueprint: `### Agent Logic:
+
+1.  **Intent Classification**:
+    - The agent first determines the user's intent (e.g., check order status, process refund, general query). It uses a pre-trained natural language understanding model to achieve this with high accuracy.
+    - If the intent is unclear, it will ask for clarification from the user.
+
+2.  **Tool Selection**:
+    - Based on the classified intent, it selects the appropriate tool.
+    - For 'order_status', it uses the \`Database Connector\` to query the orders database.
+    - For 'process_refund', it first uses the \`Database Connector\` to verify purchase details and then the \`Email Sender\` to notify the user of the refund status.
+    - For 'general_query', it leverages a knowledge base to provide an answer.
+    
+3.  **Execution & Response**:
+    - The agent executes the selected tool with the necessary parameters extracted from the user's query (e.g., order ID). 
+    - It handles potential errors gracefully, such as when an order ID is not found.
+    - A final, user-friendly response is generated, summarizing the outcome of the action.
+
+4. **Security & Validation**:
+    - All refund requests require an additional validation step where the agent checks for suspicious activity before processing.
+    - User authentication is verified using an internal service before any sensitive data is accessed.`,
     graph: {
       nodes: [
         { id: '1', position: { x: 0, y: 0 }, data: { label: '시작' }, type: 'input' },
@@ -36,6 +57,15 @@ export const MOCK_AGENTS: Agent[] = [
     createdAt: '2023-11-15',
     executionCount: 450,
     status: 'in-operation',
+    toolIds: ['tool-3'],
+    blueprint: `### Data Analysis Flow:
+
+1. **File Ingestion**: 
+   - The agent ingests a CSV file using the \`File Parser (CSV)\` tool.
+2. **Data Processing**:
+   - It analyzes the structured JSON data to identify key metrics and trends.
+3. **Report Generation**:
+   - The agent synthesizes the findings into a human-readable report.`,
   },
   {
     id: 'agent-3',
@@ -44,6 +74,7 @@ export const MOCK_AGENTS: Agent[] = [
     createdAt: '2024-01-20',
     executionCount: 890,
     status: 'in-operation',
+    toolIds: ['tool-4'],
   },
   {
     id: 'agent-4',
@@ -52,6 +83,7 @@ export const MOCK_AGENTS: Agent[] = [
     createdAt: '2023-09-05',
     executionCount: 2100,
     status: 'building',
+    toolIds: [],
   },
 ];
 
@@ -74,7 +106,7 @@ export const MOCK_CHART_DATA = [
 
 export const MOCK_STATS = [
   { title: '총 실행 횟수', value: '12,453', change: '지난달 대비 +12.5%', icon: Zap },
-  { title: '운영 중인 에이전트', value: '24', change: '+2개의 새 에이전트', icon: Bot },
+  { title: '운영 중인 에이전트', value: '4', change: '+2개의 새 에이전트', icon: Bot },
   { title: '성공률', value: '98.2%', change: '지난달 대비 +0.5%', icon: ArrowUpRight },
   { title: '사용 가능한 도구', value: '8', change: '1개 비활성', icon: Wrench },
 ];
